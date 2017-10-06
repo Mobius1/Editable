@@ -214,7 +214,7 @@ datatable.editable.saveCell("Foobar");
 
 
 ### `saveRow(data, row)`
-Set the new content of a row. Just pass a reference to the row as the first argument and the new content of the cells as the second.
+Set the new content of a row. Just pass the new row data as the first argument and a reference to the row as the second
 
 This can be used to either close and save a row that is currently in edit mode (as above) or for quickly setting the content of the row.
 
@@ -242,6 +242,17 @@ datatable.editable.saveRow(["foo", "bar", "baz", "qux"]);
 ---
 
 ## Changelog
+
+`v0.0.9`
+
+* Change event name:
+  * `datatable.editable.init` -> `editable.init`
+
+* Add events:
+  * `editable.save.cell`
+  * `editable.save.row`
+  * `editable.context.open`
+  * `editable.context.close`
 
 `v0.0.8`
 

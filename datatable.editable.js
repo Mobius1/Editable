@@ -1,10 +1,10 @@
-/*! Editable 0.0.8
+/*! Editable 0.0.9
  * © 2016-2017 Karl Saunders
  */
 /**
  * @summary     Editable
  * @description Allow editing of cells and rows
- * @version     0.0.8
+ * @version     0.0.9
  * @file        datatable.editable.js
  * @author      Karl Saunders
  * @contact     mobius1@gmx.com
@@ -49,6 +49,9 @@ if (window.DataTable && typeof window.DataTable === "function") {
                 container: "datatable-editor-container",
                 separator: "datatable-editor-separator"
             },
+
+            // include hidden columns in the editor
+            hiddenColumns: false,
 
             // enable th context menu
             contextMenu: true,
@@ -207,7 +210,7 @@ if (window.DataTable && typeof window.DataTable === "function") {
             that.bindEvents();
 
             setTimeout(function() {
-                instance.emit("datatable.editable.init");
+                instance.emit("editable.init");
             }, 10);
         };
 
@@ -367,6 +370,8 @@ if (window.DataTable && typeof window.DataTable === "function") {
 
             this.data = {};
             this.editing = this.editingCell = false;
+
+            instance.emit("editable.save.cell");
         };
 
         /**
@@ -471,6 +476,8 @@ if (window.DataTable && typeof window.DataTable === "function") {
             instance.columns().rebuild();
 
             this.closeModal();
+
+            instance.emit("editable.save.row");
         };
 
         /**
@@ -568,6 +575,8 @@ if (window.DataTable && typeof window.DataTable === "function") {
             if (this.config.contextMenu) {
                 document.body.appendChild(this.container);
                 this.closed = false;
+
+                instance.emit("editable.context.open");
             }
         };
 
@@ -579,6 +588,8 @@ if (window.DataTable && typeof window.DataTable === "function") {
             if (this.config.contextMenu && !this.closed) {
                 this.closed = true;
                 document.body.removeChild(this.container);
+
+                instance.emit("editable.context.close");
             }
         };
 
