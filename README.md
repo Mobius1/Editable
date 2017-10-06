@@ -26,13 +26,13 @@ npm install vanilla-datatables-editable --save
 Grab the files from one of the CDNs and include them in your page:
 
 ```html
-<link href="https://unpkg.com/vanilla-datatables-editable@latest/dist/datatable.editable.min.css" rel="stylesheet" type="text/css">
-<script src="https://unpkg.com/vanilla-datatables-editable@latest/dist/datatable.editable.min.js" type="text/javascript"></script>
+<link href="https://unpkg.com/vanilla-datatables-editable@latest/datatable.editable.min.css" rel="stylesheet" type="text/css">
+<script src="https://unpkg.com/vanilla-datatables-editable@latest/datatable.editable.min.js" type="text/javascript"></script>
 
 //or
 
-<link href="https://cdn.jsdelivr.net/npm/vanilla-datatables-editable@latest/dist/datatable.editable.min.css" rel="stylesheet" type="text/css">
-<script src="https://cdn.jsdelivr.net/npm/vanilla-datatables-editable@latest/dist/datatable.editable.min.js" type="text/javascript"></script>
+<link href="https://cdn.jsdelivr.net/npm/vanilla-datatables-editable@latest/datatable.editable.min.css" rel="stylesheet" type="text/css">
+<script src="https://cdn.jsdelivr.net/npm/vanilla-datatables-editable@latest/datatable.editable.min.js" type="text/javascript"></script>
 ```
 
 You can replace `latest` with the required release number.
