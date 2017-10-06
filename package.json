@@ -1,0 +1,24 @@
+{
+  "name": "vanilla-datatables-editable",
+  "version": "0.0.7",
+  "description": "A table editor extension for Vanilla-DataTables.",
+  "main": "datatable.editable.min.js",
+  "scripts": {
+    "test": "grunt test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mobius1/Editable.git"
+  },
+  "keywords": [
+    "tables",
+    "html table",
+    "datatable"
+  ],
+  "author": "Karl Saunders",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Mobius1/Editable/issues"
+  },
+  "homepage": "https://github.com/Mobius1/Editable#readme"
+}

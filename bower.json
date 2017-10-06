@@ -1,0 +1,9 @@
+{
+    "name": "vanilla-datatables-editable",
+    "version": "0.0.7",
+    "main": "datatable.editable.min.js",
+    "ignore": [
+        ".gitattributes",
+        "README.md"
+    ]
+}
