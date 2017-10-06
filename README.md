@@ -216,6 +216,10 @@ datatable.editable.saveRow(row, ["foo", "bar", "baz", "qux"])
 
 ## Changelog
 
+`v0.0.8`
+
+* Allow `saveCell()` and `saveRow()` methods to save the current cell/row
+
 `v0.0.7`
 
 * Fixed context menu not closing

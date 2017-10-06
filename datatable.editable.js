@@ -1,10 +1,10 @@
-/*! Editable 0.0.7
+/*! Editable 0.0.8
  * © 2016-2017 Karl Saunders
  */
 /**
  * @summary     Editable
  * @description Allow editing of cells and rows
- * @version     0.0.7
+ * @version     0.0.8
  * @file        datatable.editable.js
  * @author      Karl Saunders
  * @contact     mobius1@gmx.com
@@ -310,7 +310,7 @@ if (window.DataTable && typeof window.DataTable === "function") {
                     this.saveCell();
                 } else if (e.keyCode === 27) {
                     // Escape key reverts
-                    this.saveCell(this.data.cell, this.data.content);
+                    this.saveCell(this.data.content);
                 }
             }
         };
@@ -353,6 +353,23 @@ if (window.DataTable && typeof window.DataTable === "function") {
         };
 
         /**
+         * Save edited cell
+         * @param  {Object} row    The HTMLTableCellElement
+         * @param  {String} value   Cell content
+         * @return {Void}
+         */
+        Editor.prototype.saveCell = function(value, cell) {
+            cell = cell || this.data.cell;
+            value = value || this.data.input.value;
+
+            // Set the cell content
+            cell.innerHTML = value.trim();
+
+            this.data = {};
+            this.editing = this.editingCell = false;
+        };
+
+        /**
          * Edit row
          * @param  {Object} cell    The HTMLTableRowElement
          * @return {Void}
@@ -371,17 +388,17 @@ if (window.DataTable && typeof window.DataTable === "function") {
 
             var template = [
                 "<div class='" + o.classes.inner + "'>",
-                    "<div class='" + o.classes.header + "'>",
-                        "<h4>Editing row</h4>",
-                        "<button class='" + o.classes.close + "' type='button' data-editor-close>×</button>",
-                    " </div>",
-                    "<div class='" + o.classes.block + "'>",
-                        "<form class='" + o.classes.form + "'>",
-                            "<div class='" + o.classes.row + "'>",
-                                "<button class='" + o.classes.save + "' type='button' data-editor-save>Save</button>",
-                            "</div>",
-                        "</form>",
-                    "</div>",
+                "<div class='" + o.classes.header + "'>",
+                "<h4>Editing row</h4>",
+                "<button class='" + o.classes.close + "' type='button' data-editor-close>×</button>",
+                " </div>",
+                "<div class='" + o.classes.block + "'>",
+                "<form class='" + o.classes.form + "'>",
+                "<div class='" + o.classes.row + "'>",
+                "<button class='" + o.classes.save + "' type='button' data-editor-save>Save</button>",
+                "</div>",
+                "</form>",
+                "</div>",
                 "</div>",
             ].join("");
 
@@ -399,8 +416,8 @@ if (window.DataTable && typeof window.DataTable === "function") {
                     class: o.classes.row,
                     html: [
                         "<div class='datatable-editor-row'>",
-                            "<label class='" + o.classes.label + "'>" + instance.labels[o.hiddenColumns ? i : instance.activeHeadings[i].originalCellIndex] + "</label>",
-                            "<input class='" + o.classes.input + "' value='" + cell.innerHTML + "' type='text'>",
+                        "<label class='" + o.classes.label + "'>" + instance.labels[o.hiddenColumns ? i : instance.activeHeadings[i].originalCellIndex] + "</label>",
+                        "<input class='" + o.classes.input + "' value='" + cell.innerHTML + "' type='text'>",
                         "</div>"
                     ].join("")
                 }), form.lastElementChild);
@@ -410,20 +427,24 @@ if (window.DataTable && typeof window.DataTable === "function") {
 
             this.openModal();
 
+            that.data = {
+                row: row
+            };
+
             this.editing = true;
             this.editingRow = true;
 
             // Close / save
             modal.addEventListener("click", function(e) {
                 var node = e.target;
-                if (node.hasAttribute("data-editor-close")) {  // close button
+                if (node.hasAttribute("data-editor-close")) { // close button
                     that.closeModal();
                 } else if (node.hasAttribute("data-editor-save")) { // save button
                     var data = [].slice.call(form.elements).map(function(input) {
                         return input.value.trim();
                     });
 
-                    that.saveRow(row, data);
+                    that.saveRow(data);
                 }
             });
 
@@ -436,9 +457,11 @@ if (window.DataTable && typeof window.DataTable === "function") {
          * @param  {Array} data   Cell data
          * @return {Void}
          */
-        Editor.prototype.saveRow = function(row, data) {
+        Editor.prototype.saveRow = function(data, row) {
             var that = this,
                 o = that.config;
+
+            row = row || that.data.row;
 
             [].slice.call(row.cells).forEach(function(cell, i) {
                 cell = instance.data[row.dataIndex].cells[o.hiddenColumns ? i : instance.activeHeadings[i].originalCellIndex];
@@ -448,23 +471,6 @@ if (window.DataTable && typeof window.DataTable === "function") {
             instance.columns().rebuild();
 
             this.closeModal();
-        };
-
-        /**
-         * Save edited cell
-         * @param  {Object} row    The HTMLTableCellElement
-         * @param  {String} value   Cell content
-         * @return {Void}
-         */
-        Editor.prototype.saveCell = function(cell, value) {
-            cell = cell || this.data.cell;
-            value = value || this.data.input.value;
-
-            // Set the cell content
-            cell.innerHTML = value.trim();
-
-            this.data = {};
-            this.editing = this.editingCell = false;
         };
 
         /**
@@ -541,14 +547,14 @@ if (window.DataTable && typeof window.DataTable === "function") {
             var valid = true,
                 editing = this.editing && this.editingCell;
 
-            if ( this.config.contextMenu ) {
+            if (this.config.contextMenu) {
                 valid = !this.wrapper.contains(e.target) && (editing && e.target !== this.data.input);
             }
 
             if (valid) {
                 if (editing) {
                     // Revert
-                    this.saveCell(this.data.cell, this.data.content);
+                    this.saveCell(this.data.content);
                 }
                 this.closeMenu();
             }
