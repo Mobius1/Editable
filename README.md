@@ -5,8 +5,38 @@ A plugin that makes your Vanilla-DataTables instance editable.
 
 [Demo](https://codepen.io/Mobius1/pen/rGpMMY/).
 
+---
+
+### Install
+
+## Bower
+```
+bower install vanilla-datatables-editable --save
+```
+
+## npm
+```
+npm install vanilla-datatables-editable --save
+```
 
 ---
+
+### Browser
+
+Grab the files from one of the CDNs and include them in your page:
+
+```html
+<link href="https://unpkg.com/vanilla-datatables-editable@latest/dist/datatable.editable.min.css" rel="stylesheet" type="text/css">
+<script src="https://unpkg.com/vanilla-datatables-editable@latest/dist/datatable.editable.min.js" type="text/javascript"></script>
+
+//or
+
+<link href="https://cdn.jsdelivr.net/npm/vanilla-datatables-editable@latest/dist/datatable.editable.min.css" rel="stylesheet" type="text/css">
+<script src="https://cdn.jsdelivr.net/npm/vanilla-datatables-editable@latest/dist/datatable.editable.min.js" type="text/javascript"></script>
+```
+
+You can replace `latest` with the required release number.
+
 
 ### Enable Plugin:
 
