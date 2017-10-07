@@ -1,4 +1,5 @@
 # Editable
+[![Build Status](https://travis-ci.org/Mobius1/Editable.svg?branch=master)](https://travis-ci.org/Mobius1/Editable) [![npm version](https://badge.fury.io/js/vanilla-datatables-editable.svg)](https://badge.fury.io/js/vanilla-datatables-editable) [![license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/Mobius1/Editable/blob/master/LICENSE) ![](http://img.badgesize.io/Mobius1/Editable/master/datatable.editable.min.js) ![](http://img.badgesize.io/Mobius1/Editable/master/datatable.editable.min.js?compression=gzip&label=gzipped)
 
 A plugin that makes your Vanilla-DataTables instance editable.
 
