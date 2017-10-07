@@ -246,6 +246,10 @@ datatable.editable.saveRow(["foo", "bar", "baz", "qux"]);
 
 ## Changelog
 
+`v0.0.10`
+
+* Fixed `Enter` key not saving row.
+
 `v0.0.9`
 
 * Change event name:

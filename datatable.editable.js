@@ -1,10 +1,10 @@
-/*! Editable 0.0.9
+/*! Editable 0.0.10
  * © 2016-2017 Karl Saunders
  */
 /**
  * @summary     Editable
  * @description Allow editing of cells and rows
- * @version     0.0.9
+ * @version     0.0.10
  * @file        datatable.editable.js
  * @author      Karl Saunders
  * @contact     mobius1@gmx.com
@@ -310,7 +310,11 @@ if (window.DataTable && typeof window.DataTable === "function") {
             if (this.editing && this.data) {
                 if (e.keyCode === 13) {
                     // Enter key saves
-                    this.saveCell();
+                    if (this.editingCell) {
+                        this.saveCell();
+                    } else if (this.editingRow) {
+                        this.saveRow();
+                    }
                 } else if (e.keyCode === 27) {
                     // Escape key reverts
                     this.saveCell(this.data.content);
@@ -365,13 +369,15 @@ if (window.DataTable && typeof window.DataTable === "function") {
             cell = cell || this.data.cell;
             value = value || this.data.input.value;
 
+            var oldData = cell.data;
+
             // Set the cell content
             cell.innerHTML = value.trim();
 
             this.data = {};
             this.editing = this.editingCell = false;
 
-            instance.emit("editable.save.cell");
+            instance.emit("editable.save.cell", value, oldData);
         };
 
         /**
@@ -393,17 +399,17 @@ if (window.DataTable && typeof window.DataTable === "function") {
 
             var template = [
                 "<div class='" + o.classes.inner + "'>",
-                "<div class='" + o.classes.header + "'>",
-                "<h4>Editing row</h4>",
-                "<button class='" + o.classes.close + "' type='button' data-editor-close>×</button>",
-                " </div>",
-                "<div class='" + o.classes.block + "'>",
-                "<form class='" + o.classes.form + "'>",
-                "<div class='" + o.classes.row + "'>",
-                "<button class='" + o.classes.save + "' type='button' data-editor-save>Save</button>",
-                "</div>",
-                "</form>",
-                "</div>",
+                    "<div class='" + o.classes.header + "'>",
+                        "<h4>Editing row</h4>",
+                        "<button class='" + o.classes.close + "' type='button' data-editor-close>×</button>",
+                    " </div>",
+                    "<div class='" + o.classes.block + "'>",
+                        "<form class='" + o.classes.form + "'>",
+                            "<div class='" + o.classes.row + "'>",
+                                "<button class='" + o.classes.save + "' type='button' data-editor-save>Save</button>",
+                            "</div>",
+                        "</form>",
+                    "</div>",
                 "</div>",
             ].join("");
 
@@ -421,8 +427,8 @@ if (window.DataTable && typeof window.DataTable === "function") {
                     class: o.classes.row,
                     html: [
                         "<div class='datatable-editor-row'>",
-                        "<label class='" + o.classes.label + "'>" + instance.labels[o.hiddenColumns ? i : instance.activeHeadings[i].originalCellIndex] + "</label>",
-                        "<input class='" + o.classes.input + "' value='" + cell.innerHTML + "' type='text'>",
+                            "<label class='" + o.classes.label + "'>" + instance.labels[o.hiddenColumns ? i : instance.activeHeadings[i].originalCellIndex] + "</label>",
+                            "<input class='" + o.classes.input + "' value='" + cell.innerHTML + "' type='text'>",
                         "</div>"
                     ].join("")
                 }), form.lastElementChild);
@@ -432,8 +438,15 @@ if (window.DataTable && typeof window.DataTable === "function") {
 
             this.openModal();
 
+            // Grab the inputs
+            var inputs = [].slice.call(form.elements);
+
+            // Remove save button
+            inputs.pop();
+
             that.data = {
-                row: row
+                row: row,
+                inputs: inputs
             };
 
             this.editing = true;
@@ -445,11 +458,8 @@ if (window.DataTable && typeof window.DataTable === "function") {
                 if (node.hasAttribute("data-editor-close")) { // close button
                     that.closeModal();
                 } else if (node.hasAttribute("data-editor-save")) { // save button
-                    var data = [].slice.call(form.elements).map(function(input) {
-                        return input.value.trim();
-                    });
-
-                    that.saveRow(data);
+                    // Save
+                    that.saveRow();
                 }
             });
 
@@ -466,7 +476,15 @@ if (window.DataTable && typeof window.DataTable === "function") {
             var that = this,
                 o = that.config;
 
+            data = data || that.data.inputs.map(function(input) {
+                return input.value.trim();
+            });
             row = row || that.data.row;
+
+            // Store the old data for the emitter
+            var oldData = [].slice.call(row.cells).map(function(cell) {
+                return cell.data;
+            });
 
             [].slice.call(row.cells).forEach(function(cell, i) {
                 cell = instance.data[row.dataIndex].cells[o.hiddenColumns ? i : instance.activeHeadings[i].originalCellIndex];
@@ -477,7 +495,7 @@ if (window.DataTable && typeof window.DataTable === "function") {
 
             this.closeModal();
 
-            instance.emit("editable.save.row");
+            instance.emit("editable.save.row", data, oldData);
         };
 
         /**
@@ -551,15 +569,17 @@ if (window.DataTable && typeof window.DataTable === "function") {
          */
         Editor.prototype.dismiss = function(e) {
 
-            var valid = true,
-                editing = this.editing && this.editingCell;
+            var valid = true;
 
             if (this.config.contextMenu) {
-                valid = !this.wrapper.contains(e.target) && (editing && e.target !== this.data.input);
+                valid = !this.wrapper.contains(e.target);
+                if (this.editing) {
+                    valid = !this.wrapper.contains(e.target) && e.target !== this.data.input;
+                }
             }
 
             if (valid) {
-                if (editing) {
+                if (this.editing) {
                     // Revert
                     this.saveCell(this.data.content);
                 }
