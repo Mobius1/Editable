@@ -242,6 +242,51 @@ datatable.editable.editRow(row);
 // Save it
 datatable.editable.saveRow(["foo", "bar", "baz", "qux"]);
 ```
+---
+
+## Events
+
+### `editable.init`
+```javascript
+/**
+ * Listen for the the editable.init event
+ */
+datatable.on("editable.init", function() {
+    // do something when the plugin initialises
+});
+```
+
+### `editable.save.cell`
+
+```javascript
+/**
+ * Listen for the the editable.save.cell event
+ * @param  {String} newValue    The new cell content
+ * @param  {String} oldValue    The old cell content
+ * @param  {Object} cell        The HTMLTableCellElement
+ */
+datatable.on("editable.save.cell", function(newValue, oldValue, cell) {
+    // do something when the cell is saved
+});
+```
+
+### `editable.save.row`
+
+```javascript
+/**
+ * Listen for the the editable.save.row event
+ * @param  {Array} newData    The new row content
+ * @param  {Array} oldData    The old row content
+ * @param  {Object} row       The HTMLTableRowElement
+ */
+datatable.on("editable.save.row", function(newData, oldData, row) {
+    // do something when the row is saved
+});
+```
+
+### `editable.context.open`
+
+### `editable.context.close`
 
 ---
 
