@@ -8,6 +8,10 @@ A plugin that makes your Vanilla-DataTables instance editable.
 
 ---
 
+Note that `v0.1.0` and above has been updated to be compatable with `v2.0` of Vanilla-DataTables. If you're using an older version of Vanilla-DataTables then you need `v0.0.10` of `Editable`.
+
+---
+
 ### Install
 
 ## Bower
