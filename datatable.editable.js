@@ -1,10 +1,10 @@
-/*! Editable 0.1.0
+/*! Editable 0.1.1
  * © 2016-2017 Karl Saunders
  */
 /**
  * @summary     Editable
  * @description Allow editing of cells and rows
- * @version     0.1.0
+ * @version     0.1.1
  * @file        datatable.editable.js
  * @author      Karl Saunders
  * @contact     mobius1@gmx.com
@@ -60,13 +60,13 @@ if (window.DataTable) {
 
             // set the context menu items
             menuItems: [{
-                    text: "<span class='mdi mdi-lead-pencil'></span> Edit Cell",
+                    text: "Edit Cell",
                     action: function(e) {
                         this.editCell();
                     }
                 },
                 {
-                    text: "<span class='mdi mdi-lead-pencil'></span> Edit Row",
+                    text: "Edit Row",
                     action: function(e) {
                         this.editRow();
                     }
@@ -75,7 +75,7 @@ if (window.DataTable) {
                     separator: true
                 },
                 {
-                    text: "<span class='mdi mdi-delete'></span> Remove Row",
+                    text: "Remove Row",
                     action: function(e) {
                         if (confirm("Are you sure?")) {
                             this.removeRow();
