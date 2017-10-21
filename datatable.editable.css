@@ -1,10 +1,10 @@
-/*! Editable 0.0.10
+/*! Editable 0.1.0
  * © 2016-2017 Karl Saunders
  */
 /**
  * @summary     Editable
  * @description Allow editing of cells and rows
- * @version     0.0.10
+ * @version     0.1.0
  * @file        datatable.editable.js
  * @author      Karl Saunders
  * @contact     mobius1@gmx.com
@@ -22,39 +22,47 @@
  *
  * For details please refer to: https://github.com/Mobius1/Vanilla-DataTables
  */
-.datatable-editor-modal {
+.dt-editor-modal {
   position: absolute;
   left: 0;
   top: 0;
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.6);
-  animation: 250ms ease 0ms fadeIn;
-}
-.datatable-editor-modal.closed {
-  animation: 250ms ease 0ms fadeIn;
-}
-.datatable-editor-modal.closed .datatable-editor-inner {
-  animation: 250ms ease 0ms slideIn;
+  -webkit-animation: 250ms ease 0ms fadeIn;
+          animation: 250ms ease 0ms fadeIn;
 }
 
-.datatable-editor-inner {
+.dt-editor-modal.closed {
+  -webkit-animation: 250ms ease 0ms fadeIn;
+          animation: 250ms ease 0ms fadeIn;
+}
+
+.dt-editor-modal.closed .dt-editor-inner {
+  -webkit-animation: 250ms ease 0ms slideIn;
+          animation: 250ms ease 0ms slideIn;
+}
+
+.dt-editor-inner {
   width: 30%;
   margin: 10% auto;
   background-color: #fff;
   border-radius: 5px;
-  animation: 250ms ease 0ms slideIn;
+  -webkit-animation: 250ms ease 0ms slideIn;
+          animation: 250ms ease 0ms slideIn;
 }
 
-.datatable-editor-header {
+.dt-editor-header {
   position: relative;
   border-bottom: 1px solid #ccc;
 }
-.datatable-editor-header h4 {
+
+.dt-editor-header h4 {
   font-size: 20px;
   margin: 0;
 }
-.datatable-editor-header button {
+
+.dt-editor-header button {
   position: absolute;
   right: 10px;
   top: 10px;
@@ -66,41 +74,42 @@
   line-height: 1;
   opacity: 0.6;
 }
-.datatable-editor-header button:hover {
+
+.dt-editor-header button:hover {
   opacity: 1;
 }
 
-.datatable-editor-header {
+.dt-editor-header {
   padding: 15px 30px;
 }
 
-.datatable-editor-block {
+.dt-editor-block {
   padding: 15px 60px;
 }
 
-.datatable-editor-row {
+.dt-editor-row {
   margin: 0 0 15px;
 }
 
-.datatable-editor-row:last-child {
+.dt-editor-row:last-child {
   margin: 0 0 5px;
 }
 
-.datatable-editor-row:last-child {
+.dt-editor-row:last-child {
   text-align: right;
 }
 
-.datatable-editor-label {
+.dt-editor-label {
   width: 25%;
   text-align: right;
   padding: 0 15px;
 }
 
-.datatable-editor-label, .datatable-editor-input {
+.dt-editor-label, .dt-editor-input {
   display: inline-block;
 }
 
-.datatable-editor-input {
+.dt-editor-input {
   padding: 4px 6px;
   border: 1px solid #ccc;
   width: 100%;
@@ -112,12 +121,12 @@
   color: inherit;
 }
 
-.datatable-editor-row .datatable-editor-input {
+.dt-editor-row .dt-editor-input {
   margin: 0;
   width: 75%;
 }
 
-.datatable-editor-save {
+.dt-editor-save {
   background-color: #27ae60;
   border: 1px solid #27ae60;
   padding: 6px 12px;
@@ -128,17 +137,18 @@
   cursor: pointer;
   border-radius: 3px;
 }
-.datatable-editor-save:hover {
+
+.dt-editor-save:hover {
   background-color: #2cc36b;
   border-color: #2cc36b;
 }
 
 /* ContextMenu */
-.datatable-editor-wrapper {
+.dt-editor-wrapper {
   position: absolute;
 }
 
-.datatable-editor-menu {
+.dt-editor-menu {
   background: #fff none repeat scroll 0 0;
   border-radius: 3px;
   margin: 0;
@@ -146,10 +156,12 @@
   padding: 5px 0;
   box-shadow: 0px 0px 10px 2px #aaa;
 }
-.datatable-editor-menu li {
+
+.dt-editor-menu li {
   list-style: none;
 }
-.datatable-editor-menu a {
+
+.dt-editor-menu a {
   box-sizing: border-box;
   color: inherit;
   display: block;
@@ -157,13 +169,23 @@
   text-decoration: none;
   width: 100%;
 }
-.datatable-editor-menu a:hover {
+
+.dt-editor-menu a:hover {
   background-color: #ddd;
 }
 
-.datatable-editor-separator {
+.dt-editor-separator {
   border-bottom: 1px solid #aaa;
   margin: 5px 0;
+}
+
+@-webkit-keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes fadeIn {
@@ -174,13 +196,27 @@
     opacity: 1;
   }
 }
-@keyframes slideIn {
+@-webkit-keyframes slideIn {
   from {
     opacity: 0;
-    transform: translate3d(0, -10%, 0);
+    -webkit-transform: translate3d(0, -10%, 0);
+            transform: translate3d(0, -10%, 0);
   }
   to {
     opacity: 1;
-    transform: translate3d(0, 0%, 0);
+    -webkit-transform: translate3d(0, 0%, 0);
+            transform: translate3d(0, 0%, 0);
+  }
+}
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    -webkit-transform: translate3d(0, -10%, 0);
+            transform: translate3d(0, -10%, 0);
+  }
+  to {
+    opacity: 1;
+    -webkit-transform: translate3d(0, 0%, 0);
+            transform: translate3d(0, 0%, 0);
   }
 }

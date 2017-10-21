@@ -1,10 +1,10 @@
-/*! Editable 0.0.10
+/*! Editable 0.1.0
  * © 2016-2017 Karl Saunders
  */
 /**
  * @summary     Editable
  * @description Allow editing of cells and rows
- * @version     0.0.10
+ * @version     0.1.0
  * @file        datatable.editable.js
  * @author      Karl Saunders
  * @contact     mobius1@gmx.com
@@ -22,32 +22,32 @@
  *
  * For details please refer to: https://github.com/Mobius1/Vanilla-DataTables
  */
-if (window.DataTable && typeof window.DataTable === "function") {
-    DataTable.extend("editable", function(options, utils) {
-        // VDT Reference
-        var instance = this;
+if (window.DataTable) {
+    DataTable.extend("editable", function(instance, options, utils) {
+
         /**
          * Default config
          * @type {Object}
          */
         var defaults = {
             classes: {
-                row: "datatable-editor-row",
-                form: "datatable-editor-form",
-                item: "datatable-editor-item",
-                menu: "datatable-editor-menu",
-                save: "datatable-editor-save",
-                block: "datatable-editor-block",
-                close: "datatable-editor-close",
-                inner: "datatable-editor-inner",
-                input: "datatable-editor-input",
-                label: "datatable-editor-label",
-                modal: "datatable-editor-modal",
-                action: "datatable-editor-action",
-                header: "datatable-editor-header",
-                wrapper: "datatable-editor-wrapper",
-                container: "datatable-editor-container",
-                separator: "datatable-editor-separator"
+                row: "dt-editor-row",
+                form: "dt-editor-form",
+                item: "dt-editor-item",
+                menu: "dt-editor-menu",
+                save: "dt-editor-save",
+                block: "dt-editor-block",
+                close: "dt-editor-close",
+                inner: "dt-editor-inner",
+                input: "dt-editor-input",
+                label: "dt-editor-label",
+                modal: "dt-editor-modal",
+                action: "dt-editor-action",
+                header: "dt-editor-header",
+                wrapper: "dt-editor-wrapper",
+                editable: "dt-editor-editable",
+                container: "dt-editor-container",
+                separator: "dt-editor-separator"
             },
 
             // include hidden columns in the editor
@@ -55,6 +55,8 @@ if (window.DataTable && typeof window.DataTable === "function") {
 
             // enable th context menu
             contextMenu: true,
+
+            clickEvent: "dblclick",
 
             // set the context menu items
             menuItems: [{
@@ -149,10 +151,13 @@ if (window.DataTable && typeof window.DataTable === "function") {
          * @return {Void}
          */
         Editor.prototype.init = function() {
+
+            if (this.initialised) return;
+
             var that = this,
                 o = that.config;
 
-            utils.classList.add(instance.wrapper, "datatable-editable");
+            utils.classList.add(instance.wrapper, o.classes.editable);
 
             if (o.contextMenu) {
 
@@ -210,6 +215,7 @@ if (window.DataTable && typeof window.DataTable === "function") {
             that.bindEvents();
 
             setTimeout(function() {
+                that.initialised = true;
                 instance.emit("editable.init");
             }, 10);
         };
@@ -226,11 +232,11 @@ if (window.DataTable && typeof window.DataTable === "function") {
                 update: this.update.bind(this),
                 dismiss: this.dismiss.bind(this),
                 keydown: this.keydown.bind(this),
-                double: this.double.bind(this)
+                click: this.click.bind(this)
             };
 
-            // listen for double-click
-            on(this.target, "dblclick", this.events.double);
+            // listen for click / double-click
+            on(this.target, this.config.clickEvent, this.events.click);
 
             // listen for click anywhere but the menu
             on(document, "click", this.events.dismiss);
@@ -259,7 +265,7 @@ if (window.DataTable && typeof window.DataTable === "function") {
 
             var valid = this.target.contains(e.target);
 
-            if (!this.disabled && valid) {
+            if (this.config.contextMenu && !this.disabled && valid) {
                 e.preventDefault();
 
                 // get the mouse position
@@ -289,7 +295,7 @@ if (window.DataTable && typeof window.DataTable === "function") {
          * @param  {Object} e Event
          * @return {Void}
          */
-        Editor.prototype.double = function(e) {
+        Editor.prototype.click = function(e) {
             if (!this.editing) {
                 var cell = closest(e.target, function(el) {
                     return el.nodeName === "TD";
@@ -336,18 +342,22 @@ if (window.DataTable && typeof window.DataTable === "function") {
 
             var that = this;
 
+            var row = instance.table.rows[cell.parentNode.dataIndex];
+
+            cell = row.cells[cell.dataIndex];
+
             that.data = {
                 cell: cell,
-                content: cell.innerHTML,
+                content: cell.content,
                 input: utils.createElement("input", {
                     type: "text",
+                    value: cell.content,
                     class: that.config.classes.input,
-                    value: cell.innerHTML
                 })
             };
 
-            cell.innerHTML = "";
-            cell.appendChild(that.data.input);
+            cell.node.innerHTML = "";
+            cell.node.appendChild(that.data.input);
 
             setTimeout(function() {
                 that.data.input.focus();
@@ -369,10 +379,10 @@ if (window.DataTable && typeof window.DataTable === "function") {
             cell = cell || this.data.cell;
             value = value || this.data.input.value;
 
-            var oldData = cell.data;
+            var oldData = cell.content;
 
             // Set the cell content
-            cell.innerHTML = value.trim();
+            cell.setContent(value.trim());
 
             this.data = {};
             this.editing = this.editingCell = false;
@@ -393,23 +403,22 @@ if (window.DataTable && typeof window.DataTable === "function") {
             if (row.nodeName !== "TR" || this.editing) return;
 
             var that = this,
-                o = that.config;
-
-            row = o.hiddenColumns ? instance.data[row.dataIndex] : instance.activeRows[row.dataIndex];
+                o = that.config,
+                row = instance.table.rows[row.dataIndex];
 
             var template = [
                 "<div class='" + o.classes.inner + "'>",
-                    "<div class='" + o.classes.header + "'>",
-                        "<h4>Editing row</h4>",
-                        "<button class='" + o.classes.close + "' type='button' data-editor-close>×</button>",
-                    " </div>",
-                    "<div class='" + o.classes.block + "'>",
-                        "<form class='" + o.classes.form + "'>",
-                            "<div class='" + o.classes.row + "'>",
-                                "<button class='" + o.classes.save + "' type='button' data-editor-save>Save</button>",
-                            "</div>",
-                        "</form>",
-                    "</div>",
+                "<div class='" + o.classes.header + "'>",
+                "<h4>Editing row</h4>",
+                "<button class='" + o.classes.close + "' type='button' data-editor-close>×</button>",
+                " </div>",
+                "<div class='" + o.classes.block + "'>",
+                "<form class='" + o.classes.form + "'>",
+                "<div class='" + o.classes.row + "'>",
+                "<button class='" + o.classes.save + "' type='button' data-editor-save>Save</button>",
+                "</div>",
+                "</form>",
+                "</div>",
                 "</div>",
             ].join("");
 
@@ -423,15 +432,17 @@ if (window.DataTable && typeof window.DataTable === "function") {
 
             // Add the inputs for each cell
             [].slice.call(row.cells).forEach(function(cell, i) {
-                form.insertBefore(utils.createElement("div", {
-                    class: o.classes.row,
-                    html: [
-                        "<div class='datatable-editor-row'>",
-                            "<label class='" + o.classes.label + "'>" + instance.labels[o.hiddenColumns ? i : instance.activeHeadings[i].originalCellIndex] + "</label>",
-                            "<input class='" + o.classes.input + "' value='" + cell.innerHTML + "' type='text'>",
-                        "</div>"
-                    ].join("")
-                }), form.lastElementChild);
+                if (!cell.hidden || (cell.hidden && o.hiddenColumns)) {
+                    form.insertBefore(utils.createElement("div", {
+                        class: o.classes.row,
+                        html: [
+                            "<div class='datatable-editor-row'>",
+                            "<label class='" + o.classes.label + "'>" + instance.table.header.cells[i].content + "</label>",
+                            "<input class='" + o.classes.input + "' value='" + cell.content + "' type='text'>",
+                            "</div>"
+                        ].join("")
+                    }), form.lastElementChild);
+                }
             });
 
             this.modal = modal;
@@ -482,16 +493,13 @@ if (window.DataTable && typeof window.DataTable === "function") {
             row = row || that.data.row;
 
             // Store the old data for the emitter
-            var oldData = [].slice.call(row.cells).map(function(cell) {
-                return cell.data;
+            var oldData = row.cells.map(function(cell) {
+                return cell.content;
             });
 
-            [].slice.call(row.cells).forEach(function(cell, i) {
-                cell = instance.data[row.dataIndex].cells[o.hiddenColumns ? i : instance.activeHeadings[i].originalCellIndex];
-                cell.innerHTML = cell.data = data[i];
+            row.cells.forEach(function(cell, i) {
+                cell.setContent(data[i]);
             });
-
-            instance.columns().rebuild();
 
             this.closeModal();
 
@@ -579,9 +587,9 @@ if (window.DataTable && typeof window.DataTable === "function") {
             }
 
             if (valid) {
-                if (this.editing) {
+                if (this.editingCell) {
                     // Revert
-                    this.saveCell(this.data.content);
+                    this.saveCell(this.data.cell.content);
                 }
                 this.closeMenu();
             }
@@ -618,7 +626,7 @@ if (window.DataTable && typeof window.DataTable === "function") {
          * @return {Void}
          */
         Editor.prototype.destroy = function() {
-            off(this.target, "dblclick", this.events.double);
+            off(this.target, this.config.clickEvent, this.events.click);
             off(this.target, "contextmenu", this.events.context);
 
             off(document, "click", this.events.dismiss);
@@ -627,9 +635,13 @@ if (window.DataTable && typeof window.DataTable === "function") {
             off(window, "resize", this.events.reset);
             off(window, "scroll", this.events.reset);
 
-            document.body.removeChild(this.container);
+            if (document.body.contains(this.container)) {
+                document.body.removeChild(this.container);
+            }
+
+            this.initialised = false;
         };
 
-        return new Editor(this.body, options);
+        return new Editor(this.table.body, options);
     });
 }
