@@ -387,7 +387,7 @@ if (window.DataTable) {
             this.data = {};
             this.editing = this.editingCell = false;
 
-            instance.emit("editable.save.cell", value, oldData);
+            instance.emit("editable.save.cell", value, oldData, cell);
         };
 
         /**
@@ -503,7 +503,7 @@ if (window.DataTable) {
 
             this.closeModal();
 
-            instance.emit("editable.save.row", data, oldData);
+            instance.emit("editable.save.row", data, oldData, row);
         };
 
         /**
